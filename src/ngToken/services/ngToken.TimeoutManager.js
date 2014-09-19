@@ -19,10 +19,11 @@
         };
 
         timeout.watch = function () {
+            console.log('watching');
             var self = this;
             $idle.watch();
 
-            $rootScope.$on('startIdle', $scope.resetIdle());
+            $rootScope.$on('startIdle', self.resetIdle());
 
             $document.on($idle._options().events, function () {
                 var newdate = new Date();

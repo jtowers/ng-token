@@ -39,15 +39,15 @@
             }
         };
 
-        this.manageSessionTimeout = function (val) {
+        this.manageTimeout = function (val) {
             if(typeof val !== 'boolean') throw new Error('manageSessionTimeout should be boolean');
-            this.defaults.manageSessionTimeout = val;
+            this.defaults.manageTimeout = val;
         };
 
         this.$get = function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
-            this.srv.manageSessionTimeout = this.defaults.manageSessionTimeout;
+            this.srv.manageTimeout = this.defaults.manageTimeout;
             if(this.defaults.tokenStorage === 'localStorage') {
                 this.srv.$storage = $window[this.defaults.tokenStorage];
             }

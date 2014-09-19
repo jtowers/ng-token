@@ -50,7 +50,7 @@
                 logout: '/logout'
             },
             tokenStorage: 'localStorage',
-            manageSessionTimeout: true,
+            manageTimeout: true,
         };
 
         this.newToken = function (method, url) {
@@ -79,15 +79,15 @@
             }
         };
 
-        this.manageSessionTimeout = function (val) {
+        this.manageTimeout = function (val) {
             if(typeof val !== 'boolean') throw new Error('manageSessionTimeout should be boolean');
-            this.defaults.manageSessionTimeout = val;
+            this.defaults.manageTimeout = val;
         };
 
         this.$get = ["$rootScope", "$window", "$http", "$tokenUser", function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
-            this.srv.manageSessionTimeout = this.defaults.manageSessionTimeout;
+            this.srv.manageTimeout = this.defaults.manageTimeout;
             if(this.defaults.tokenStorage === 'localStorage') {
                 this.srv.$storage = $window[this.defaults.tokenStorage];
             }
@@ -133,6 +133,58 @@
     });
 })();
 (function () {
+    var app = angular.module('ngToken.TimeoutManager', ['ngToken.Provider', 'ngIdle']);
+    app.factory('$tokenTimeout', ["$idle", "$token", "$window", "$rootScope", "$document", function ($idle, $token, $window, $rootScope, $document) {
+        var timeout = {};
+
+        timeout.checkIdle = function (countdown) {
+            if($token.getCachedToken()) {
+                if($token.$storage.lastTouch <= this.lastActivity || !this.lastActivity) {
+                    $rootScope.$broadcast('$tokenWarn', countdown);
+                } else {
+                    this.resetIdle();
+                }
+            }
+        };
+
+        timeout.resetIdle = function () {
+            $idle.unwatch();
+            $idle.watch();
+        };
+
+        timeout.watch = function () {
+            console.log('watching');
+            var self = this;
+            $idle.watch();
+
+            $rootScope.$on('startIdle', self.resetIdle());
+
+            $document.on($idle._options().events, function () {
+                var newdate = new Date();
+                $token.$storage.lastTouch = newdate;
+                self.lastActivity = newdate;
+            });
+
+            $rootScope.$on('$idleWarn', function (e, countdown) {
+                console.log('warning: ' + countdown);
+                this.checkIdle(countdown);
+            });
+
+            $rootScope.$on('$idleTimeout', function () {
+                console.log('timeout');
+                $token.sessionExpired();
+                $rootScope.$broadcast('$tokenExpired');
+            });
+
+            $rootScope.$on('$keepalive', function () {
+                $token.keepAlive();
+            });
+        };
+        
+        return timeout;
+    }]);
+})();
+(function () {
 'use strict';
 var app = angular.module('ngToken.User', []);
 app.factory('$tokenUser',
@@ -160,45 +212,12 @@ User.getToken = function(){
     }]
 );
 })();
-angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngIdle'])
+angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngToken.TimeoutManager'])
 
-    .run(["$idle", "$token", "$window", "$rootScope", "$document", function ($idle, $token, $window, $rootScope, $document) {
-        var $scope = $rootScope;
-        if($token.manageSessionTimeout) {
-            $idle.watch();
-            $scope.resetIdle = function () {
-                $idle.unwatch();
-                $idle.watch();
-            };
-
-            $scope.$on('startIdle', $scope.resetIdle());
-            $scope.checkIdle = function (countdown) {
-                if($token.getCachedToken()) {
-                    if($token.$storage.lastTouch <= $scope.lastActivity || !$scope.lastActivity) {
-                        $rootScope.$broadcast('$tokenWarn', countdown);
-                    } else {
-                        $scope.resetIdle();
-                    }
-                }
-            };
-
-            $document.on($idle._options().events, function () {
-                var newdate = new Date();
-                $token.$storage.lastTouch = newdate;
-                $scope.lastActivity = newdate;
-            });
-            $scope.$on('$idleWarn', function (e, countdown) {
-                console.log('warning: ' + countdown);
-                $scope.checkIdle(countdown);
-            });
-            $scope.$on('$idleTimeout', function () {
-                console.log('timeout');
-                $token.sessionExpired();
-                $rootScope.$broadcast('$tokenExpired');
-            });
-            $scope.$on('$keepalive', function(){
-                $token.keepAlive();
-            });
-        }
-    }]);
+    .run(["$token", "$tokenTimeout", function($token, $tokenTimeout){
+    console.log($token.manageTimeout);
+    if($token.manageTimeout) {
+        $tokenTimeout.watch();
+    }
+}]);
 }());
