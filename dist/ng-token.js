@@ -3,13 +3,13 @@
 
 (function () {
     var app = angular.module('ngToken.Interceptor', ['ngToken.User']);
-    app.factory('authIntercept', ["$rootScope", "AUTH_EVENTS", "$q", "$window", "UserService", function ($rootScope, AUTH_EVENTS, $q, $window, UserService) {
+    app.factory('ngToken.Intercept', ["$rootScope", "AUTH_EVENTS", "$q", "$window", "$tokenUser", function ($rootScope, AUTH_EVENTS, $q, $window, $tokenUser) {
 
         var intercept = {};
         intercept.request = function (config) {
             config.headers = config.headers || {};
-            if(UserService.getToken()) {
-                config.headers.Authorization = 'Bearer ' + UserService.getToken();
+            if($tokenUser.getToken()) {
+                config.headers.Authorization = 'Bearer ' + $tokenUser.getToken();
             }
             return config;
         };
@@ -24,7 +24,7 @@
     }]);
 
     app.config(["$httpProvider", function ($httpProvider) {
-        $httpProvider.interceptors.push('authIntercept');
+        $httpProvider.interceptors.push('ngToken.Intercept');
     }]);
 
     app.constant('AUTH_EVENTS', {
@@ -45,8 +45,9 @@
     app.provider('$token', function () {
         this.defaults = {
             endpoints: {
-                login: '/api/token/new',
-                keepAlive: 'api/token/keepAlive'
+                login: '/login',
+                keepAlive: '/token/keepAlive',
+                logout: '/logout'
             },
             tokenStorage: 'localStorage',
             manageSessionTimeout: true,
@@ -83,7 +84,7 @@
             this.defaults.manageSessionTimeout = val;
         };
 
-        this.$get = ["$rootScope", "$window", "$http", "UserService", function ($rootScope, $window, $http, UserService) {
+        this.$get = ["$rootScope", "$window", "$http", "$tokenUser", function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
             this.srv.manageSessionTimeout = this.defaults.manageSessionTimeout;
@@ -91,14 +92,14 @@
                 this.srv.$storage = $window[this.defaults.tokenStorage];
             }
             this.srv.getCachedToken = function () {
-                return UserService.getToken();
+                return $tokenUser.getToken();
             };
             this.srv.setToken = function (token) {
-                UserService.setToken(token);
+                $tokenUser.setToken(token);
             };
 
             this.srv.sessionExpired = function () {
-                UserService.removeToken();
+                $tokenUser.removeToken();
                 //maybe add in stuff to remove deserialized user from storage, too;
             };
 
@@ -134,7 +135,7 @@
 (function () {
 'use strict';
 var app = angular.module('ngToken.User', []);
-app.factory('UserService',
+app.factory('$tokenUser',
     ["$window", "$rootScope", function ($window, $rootScope) {
         var User = {};
     User.$storage = $window.localStorage;

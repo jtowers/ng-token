@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var app = angular.module('ngToken.User', []);
-app.factory('UserService',
+app.factory('$tokenUser',
     function ($window, $rootScope) {
         var User = {};
     User.$storage = $window.localStorage;

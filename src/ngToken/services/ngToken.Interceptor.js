@@ -1,12 +1,12 @@
 (function () {
     var app = angular.module('ngToken.Interceptor', ['ngToken.User']);
-    app.factory('authIntercept', function ($rootScope, AUTH_EVENTS, $q, $window, UserService) {
+    app.factory('ngToken.Intercept', function ($rootScope, AUTH_EVENTS, $q, $window, $tokenUser) {
 
         var intercept = {};
         intercept.request = function (config) {
             config.headers = config.headers || {};
-            if(UserService.getToken()) {
-                config.headers.Authorization = 'Bearer ' + UserService.getToken();
+            if($tokenUser.getToken()) {
+                config.headers.Authorization = 'Bearer ' + $tokenUser.getToken();
             }
             return config;
         };
@@ -21,7 +21,7 @@
     });
 
     app.config(function ($httpProvider) {
-        $httpProvider.interceptors.push('authIntercept');
+        $httpProvider.interceptors.push('ngToken.Intercept');
     });
 
     app.constant('AUTH_EVENTS', {

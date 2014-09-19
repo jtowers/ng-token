@@ -19,14 +19,15 @@ module.exports = function(config) {
       'karma-chrome-launcher',
       'karma-phantomjs-launcher',
       'karma-jquery',
-      'karma-chai-jquery'
+      'karma-chai-jquery',
+        'karma-mocha-reporter'
     ],
 
     // list of files / patterns to load in the browser
     files: [
       'bower/angular/angular.js',
-      'bower/angular-resource/angular-resource.js',
       'bower/angular-mocks/angular-mocks.js',
+        'bowers/ng-idle/angular-idle.js',
       'src/**/*.js',
       'test/unit/**/*.js'
     ],
@@ -46,7 +47,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
 
     // web server port
@@ -73,6 +74,9 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+      proxies:{
+          '/': 'http://localhost:9999/'
+      }
   });
 };

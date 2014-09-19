@@ -1,6 +1,6 @@
-'use strict';
 
-describe('', function () {
+
+describe('core module', function () {
 
     var module;
     var dependencies;
@@ -17,8 +17,19 @@ describe('', function () {
         dependencies = module.requires;
     });
 
-    it('should load provider module', function () {
-        expect(true)to.be.true;
+        it('should require provider module', function () {
+       hasModule('ngToken.Provider').should.equal(true);
+    });
+    
+    it('should require interceptor module', function(){
+        hasModule('ngToken.Interceptor').should.equal(true);
+    });
+    
+    it('should require timeout module', function(){
+        hasModule('ngToken.TimeoutManager').should.equal(true)
+    });
+    
+    it('should manage session timeout by default', function(){
+        
     })
-
 });

@@ -5,11 +5,12 @@
     app.provider('$token', function () {
         this.defaults = {
             endpoints: {
-                login: '/api/token/new',
-                keepAlive: 'api/token/keepAlive'
+                login: '/login',
+                keepAlive: '/token/keepAlive',
+                logout: '/logout'
             },
             tokenStorage: 'localStorage',
-            manageSessionTimeout: true,
+            manageTimeout: true,
         };
 
         this.newToken = function (method, url) {
@@ -43,7 +44,7 @@
             this.defaults.manageSessionTimeout = val;
         };
 
-        this.$get = function ($rootScope, $window, $http, UserService) {
+        this.$get = function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
             this.srv.manageSessionTimeout = this.defaults.manageSessionTimeout;
@@ -51,14 +52,14 @@
                 this.srv.$storage = $window[this.defaults.tokenStorage];
             }
             this.srv.getCachedToken = function () {
-                return UserService.getToken();
+                return $tokenUser.getToken();
             };
             this.srv.setToken = function (token) {
-                UserService.setToken(token);
+                $tokenUser.setToken(token);
             };
 
             this.srv.sessionExpired = function () {
-                UserService.removeToken();
+                $tokenUser.removeToken();
                 //maybe add in stuff to remove deserialized user from storage, too;
             };
 
