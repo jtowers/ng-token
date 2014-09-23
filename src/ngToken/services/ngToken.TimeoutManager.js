@@ -16,6 +16,7 @@
         timeout.resetIdle = function () {
             $idle.unwatch();
             $idle.watch();
+            $rootScope.$broadcast('$tokenResetIdle');
         };
 
         timeout.watch = function () {
@@ -33,7 +34,7 @@
 
             $rootScope.$on('$idleWarn', function (e, countdown) {
                 console.log('warning: ' + countdown);
-                this.checkIdle(countdown);
+                self.checkIdle(countdown);
             });
 
             $rootScope.$on('$idleTimeout', function () {

@@ -3,7 +3,7 @@
 
 (function () {
     var app = angular.module('ngToken.Interceptor', ['ngToken.User']);
-    app.factory('ngToken.Intercept', ["$rootScope", "AUTH_EVENTS", "$q", "$window", "$tokenUser", function ($rootScope, AUTH_EVENTS, $q, $window, $tokenUser) {
+    app.factory('ngToken.Intercept', ["$rootScope", "$q", "$window", "$tokenUser", function ($rootScope, $q, $window, $tokenUser) {
 
         var intercept = {};
         intercept.request = function (config) {
@@ -16,9 +16,14 @@
 
         intercept.responseError = function (rejection) {
             if(rejection.status === 401) {
-                rejection.data.reason = AUTH_EVENTS.notAuthenticated;
+                $rootScope.$broadcast('$tokenNotAuthenticated', rejection);
+                
             }
-            return $q.reject(rejection);
+            if(rejection.status === 403){
+                $rootScope.$broadcast('$tokenNotAuthorized', rejection);
+                
+            }
+                return $q.reject(rejection);
         };
         return intercept;
     }]);
@@ -27,16 +32,6 @@
         $httpProvider.interceptors.push('ngToken.Intercept');
     }]);
 
-    app.constant('AUTH_EVENTS', {
-        loginSuccess: 'auth-login-success',
-        loginFailed: 'auth-login-failed',
-        logoutSuccess: 'auth-logout-success',
-        sessionTimeout: 'auth-session-timeout',
-        notAuthenticated: 'auth-not-authenticated',
-        notAuthorized: 'auth-not-authorized',
-        notImplemented: 'feature-not-implemented',
-        notInstalled: 'install-not-complete'
-    });
 })();
 (function () {
     var app = angular.module('ngToken.Provider', [
@@ -49,8 +44,7 @@
                 keepAlive: '/token/keepAlive',
                 logout: '/logout'
             },
-            tokenStorage: 'localStorage',
-            manageTimeout: true,
+            tokenStorage: 'localStorage'
         };
 
         this.newToken = function (method, url) {
@@ -71,17 +65,19 @@
                 throw new Error('keepalive endpoint must exist');
             }
         };
+        this.logout = function(url){
+            if(url){
+                this.defaults.endpoints.logout = url;
+            } else {
+                throw new Error('logout endpoint must exist');
+            }
+        };
         this.tokenStorage = function (storage) {
             if(storage === 'localStorage' || storage === 'sessionStorage') {
                 this.defaults.tokenStorage = storage;
             } else {
                 throw new Error('storage must be localStorage or sessionStorage');
             }
-        };
-
-        this.manageTimeout = function (val) {
-            if(typeof val !== 'boolean') throw new Error('manageSessionTimeout should be boolean');
-            this.defaults.manageTimeout = val;
         };
 
         this.$get = ["$rootScope", "$window", "$http", "$tokenUser", function ($rootScope, $window, $http, $tokenUser) {
@@ -150,6 +146,7 @@
         timeout.resetIdle = function () {
             $idle.unwatch();
             $idle.watch();
+            $rootScope.$broadcast('$tokenResetIdle');
         };
 
         timeout.watch = function () {
@@ -167,7 +164,7 @@
 
             $rootScope.$on('$idleWarn', function (e, countdown) {
                 console.log('warning: ' + countdown);
-                this.checkIdle(countdown);
+                self.checkIdle(countdown);
             });
 
             $rootScope.$on('$idleTimeout', function () {
@@ -212,12 +209,5 @@ User.getToken = function(){
     }]
 );
 })();
-angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngToken.TimeoutManager'])
-
-    .run(["$token", "$tokenTimeout", function($token, $tokenTimeout){
-    console.log($token.manageTimeout);
-    if($token.manageTimeout) {
-        $tokenTimeout.watch();
-    }
-}]);
+angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngToken.TimeoutManager']);
 }());

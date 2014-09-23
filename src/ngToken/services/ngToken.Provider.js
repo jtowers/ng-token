@@ -9,8 +9,7 @@
                 keepAlive: '/token/keepAlive',
                 logout: '/logout'
             },
-            tokenStorage: 'localStorage',
-            manageTimeout: true,
+            tokenStorage: 'localStorage'
         };
 
         this.newToken = function (method, url) {
@@ -31,17 +30,19 @@
                 throw new Error('keepalive endpoint must exist');
             }
         };
+        this.logout = function(url){
+            if(url){
+                this.defaults.endpoints.logout = url;
+            } else {
+                throw new Error('logout endpoint must exist');
+            }
+        };
         this.tokenStorage = function (storage) {
             if(storage === 'localStorage' || storage === 'sessionStorage') {
                 this.defaults.tokenStorage = storage;
             } else {
                 throw new Error('storage must be localStorage or sessionStorage');
             }
-        };
-
-        this.manageTimeout = function (val) {
-            if(typeof val !== 'boolean') throw new Error('manageSessionTimeout should be boolean');
-            this.defaults.manageTimeout = val;
         };
 
         this.$get = function ($rootScope, $window, $http, $tokenUser) {
