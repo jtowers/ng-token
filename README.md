@@ -5,6 +5,17 @@ Handles retrieving tokens, setting them in storage, injecting them into HTTP req
 
 Requires [ng-idle](https://github.com/HackedByChinese/ng-idle).
 
+## What it does
+ng-token does a few different things to help manage tokens and cookie-less user sessions.
+Features include:
+
+1. exposes several methods for requesting, renewing, and removing tokens.
+2. adds an interceptor that adds the stored token to each HTTP requests if it exists
+3. adds an interceptor that broadcasts an event on 401 and 403 errors so that they can be handled
+4. Uses ng-idle to remove the token from storage when the user is idle
+
+Activity and idle state are stored in localStorage so that they can be monitored across browser tabs. Sessions should stay alive in both tabs if a user is logged into the app from two different tabs in the same browser.
+
 ## Basic Setup:
 
 1. Include ng-token and ng-idle on your page
@@ -66,4 +77,8 @@ app.controller('myModuleController', function($token, $scope){
 Logging in will automatically set the token. A successful login response should be a hash with a key named 'token' that contains the token to store.
 
 The hash can contain anything else necessary for your app (e.g., a deserialized user).
+
+## Todo
+1. Write more substantial tests
+2. Improve documentation
 
