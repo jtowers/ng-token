@@ -12,20 +12,18 @@
             tokenStorage: 'localStorage'
         };
 
-        this.newToken = function (method, url) {
-            if(method) {
-                this.defaults.endpoints.newToken.method = method;
-            }
-
+        this.newToken = function (url) {
             if(url) {
-                this.defaults.endpoints.newToken.url = url;
+                this.defaults.endpoints.login = url;
+            } else {
+                throw new Error('new token endpoint must exist');
             }
         };
 
         this.keepAlive = function (url) {
 
             if(url) {
-                this.defaults.endpoints.keepAlive.url = url;
+                this.defaults.endpoints.keepAlive = url;
             } else {
                 throw new Error('keepalive endpoint must exist');
             }
@@ -48,10 +46,9 @@
         this.$get = function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
-            this.srv.manageTimeout = this.defaults.manageTimeout;
-            if(this.defaults.tokenStorage === 'localStorage') {
+
                 this.srv.$storage = $window[this.defaults.tokenStorage];
-            }
+
             this.srv.getCachedToken = function () {
                 return $tokenUser.getToken();
             };

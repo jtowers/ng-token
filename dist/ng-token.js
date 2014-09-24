@@ -47,20 +47,18 @@
             tokenStorage: 'localStorage'
         };
 
-        this.newToken = function (method, url) {
-            if(method) {
-                this.defaults.endpoints.newToken.method = method;
-            }
-
+        this.newToken = function (url) {
             if(url) {
-                this.defaults.endpoints.newToken.url = url;
+                this.defaults.endpoints.login = url;
+            } else {
+                throw new Error('new token endpoint must exist');
             }
         };
 
         this.keepAlive = function (url) {
 
             if(url) {
-                this.defaults.endpoints.keepAlive.url = url;
+                this.defaults.endpoints.keepAlive = url;
             } else {
                 throw new Error('keepalive endpoint must exist');
             }
@@ -83,10 +81,9 @@
         this.$get = ["$rootScope", "$window", "$http", "$tokenUser", function ($rootScope, $window, $http, $tokenUser) {
             var self = this;
             this.srv = {};
-            this.srv.manageTimeout = this.defaults.manageTimeout;
-            if(this.defaults.tokenStorage === 'localStorage') {
+
                 this.srv.$storage = $window[this.defaults.tokenStorage];
-            }
+
             this.srv.getCachedToken = function () {
                 return $tokenUser.getToken();
             };
@@ -182,32 +179,32 @@
     }]);
 })();
 (function () {
-'use strict';
-var app = angular.module('ngToken.User', []);
-app.factory('$tokenUser',
-    ["$window", "$rootScope", function ($window, $rootScope) {
-        var User = {};
-    User.$storage = $window.localStorage;
-    User.setStorage = function(stype){
-        this.$storage = $window[stype];
-    };
-    User.getStorage = function(){
-        return this.$storage;
-    };
-User.getToken = function(){
-   return this.$storage.userToken;
-};
-        User.setToken = function (token) {
-            this.$storage.userToken = token;
-            return token;
-        };
-        User.removeToken = function () {
-            return delete this.$storage.userToken;
-        };
+    'use strict';
+    var app = angular.module('ngToken.User', []);
+    app.factory('$tokenUser',
+        ["$window", "$rootScope", function ($window, $rootScope) {
+            var User = {};
+            User.$storage = $window.localStorage;
+            User.setStorage = function (stype) {
+                this.$storage = $window[stype];
+            };
+            User.getStorage = function () {
+                return this.$storage;
+            };
+            User.getToken = function () {
+                return this.$storage.userToken;
+            };
+            User.setToken = function (token) {
+                this.$storage.userToken = token;
+                return token;
+            };
+            User.removeToken = function () {
+                return delete this.$storage.userToken;
+            };
 
-        return User;
-    }]
-);
+            return User;
+        }]
+    );
 })();
 angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngToken.TimeoutManager']);
 }());
