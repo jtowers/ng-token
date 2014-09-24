@@ -26,6 +26,7 @@ module.exports = function (config) {
         files: [
             'bower/angular/angular.js',
             'bower/angular-mocks/angular-mocks.js',
+            'node_modules/ng-midway-tester/src/ngMidwayTester.js',
             'bower/ng-idle/angular-idle.js',
             'src/**/*.js',
             'test/unit/**/*.js'

@@ -27,6 +27,7 @@ module.exports = function(config) {
       'bower/angular/angular.js',
       'bower/angular-resource/angular-resource.js',
       'bower/angular-mocks/angular-mocks.js',
+       
       'dist/ng-token.min.js',
       'test/unit/**/*.js'
     ],
