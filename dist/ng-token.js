@@ -63,8 +63,8 @@
                 throw new Error('keepalive endpoint must exist');
             }
         };
-        this.logout = function(url){
-            if(url){
+        this.logout = function (url) {
+            if(url) {
                 this.defaults.endpoints.logout = url;
             } else {
                 throw new Error('logout endpoint must exist');
@@ -82,7 +82,7 @@
             var self = this;
             this.srv = {};
 
-                this.srv.$storage = $window[this.defaults.tokenStorage];
+            this.srv.$storage = $window[this.defaults.tokenStorage];
 
             this.srv.getCachedToken = function () {
                 return $tokenUser.getToken();
@@ -96,15 +96,15 @@
                 //maybe add in stuff to remove deserialized user from storage, too;
             };
 
-            this.srv.logout = function(){
+            this.srv.logout = function () {
                 self.srv.sessionExpired();
             };
 
             this.srv.login = function (cred) {
-                $http.post(self.defaults.endpoints.login)
+                $http.post(self.defaults.endpoints.login, cred)
                     .success(function (data) {
                         self.srv.setToken(data.token);
-                    $rootScope.$broadcast('$tokenAuthSuccess', data);
+                        $rootScope.$broadcast('$tokenAuthSuccess', data);
                     })
                     .error(function (data) {
                         $rootScope.$broadcast('$tokenAuthFail', data);
@@ -112,13 +112,13 @@
             };
             this.srv.keepAlive = function () {
                 $http.post(self.defaults.endpoints.keepAlive)
-                .success(function(data){
-                    UserService.setToken(data.token);
-                    $rootScope.$broadcast('$tokenKeepAlive', data);
-                })
-                .error(function(data){
-                    $rootScope.$broadcast('$tokenKeepAliveFail', data);
-                });
+                    .success(function (data) {
+                        UserService.setToken(data.token);
+                        $rootScope.$broadcast('$tokenKeepAlive', data);
+                    })
+                    .error(function (data) {
+                        $rootScope.$broadcast('$tokenKeepAliveFail', data);
+                    });
             };
 
             return this.srv;
