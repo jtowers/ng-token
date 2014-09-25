@@ -78,7 +78,7 @@
             this.srv.keepAlive = function () {
                 $http.post(self.defaults.endpoints.keepAlive)
                     .success(function (data) {
-                        UserService.setToken(data.token);
+                        $tokenUser.setToken(data.token);
                         $rootScope.$broadcast('$tokenKeepAlive', data);
                     })
                     .error(function (data) {

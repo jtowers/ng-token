@@ -3,9 +3,10 @@
     app.factory('$tokenTimeout', function ($idle, $token, $window, $rootScope, $document) {
         var timeout = {};
 
+        timeout.lastActivity = new Date();
         timeout.checkIdle = function (countdown) {
             if($token.getCachedToken()) {
-                if($token.$storage.lastTouch <= this.lastActivity || !this.lastActivity) {
+                if(Date.parse($token.$storage.lastTouch) <= this.lastActivity) {
                     $rootScope.$broadcast('$tokenWarn', countdown);
                 } else {
                     this.resetIdle();
@@ -20,7 +21,6 @@
         };
 
         timeout.watch = function () {
-            console.log('watching');
             var self = this;
             $idle.watch();
 
@@ -33,12 +33,10 @@
             });
 
             $rootScope.$on('$idleWarn', function (e, countdown) {
-                console.log('warning: ' + countdown);
                 self.checkIdle(countdown);
             });
 
             $rootScope.$on('$idleTimeout', function () {
-                console.log('timeout');
                 $token.sessionExpired();
                 $rootScope.$broadcast('$tokenExpired');
             });
@@ -47,7 +45,7 @@
                 $token.keepAlive();
             });
         };
-        
+
         return timeout;
     });
 })();
