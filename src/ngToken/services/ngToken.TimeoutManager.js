@@ -38,6 +38,7 @@
 
             $rootScope.$on('$idleTimeout', function () {
                 $token.sessionExpired();
+                self.resetIdle();
                 $rootScope.$broadcast('$tokenExpired');
             });
 

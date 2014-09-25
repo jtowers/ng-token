@@ -17,13 +17,13 @@
         intercept.responseError = function (rejection) {
             if(rejection.status === 401) {
                 $rootScope.$broadcast('$tokenNotAuthenticated', rejection);
-                
+
             }
-            if(rejection.status === 403){
+            if(rejection.status === 403) {
                 $rootScope.$broadcast('$tokenNotAuthorized', rejection);
-                
+
             }
-                return $q.reject(rejection);
+            return $q.reject(rejection);
         };
         return intercept;
     }]);
@@ -165,6 +165,7 @@
 
             $rootScope.$on('$idleTimeout', function () {
                 $token.sessionExpired();
+                self.resetIdle();
                 $rootScope.$broadcast('$tokenExpired');
             });
 
