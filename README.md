@@ -10,7 +10,7 @@ ng-token does a few different things to help manage tokens and cookie-less user 
 Features include:
 
 1. exposes several methods for requesting, renewing, and removing tokens.
-2. adds an interceptor that adds the stored token to each HTTP requests if it exists
+2. adds an interceptor that adds the stored token to each HTTP requests if it exists. Adds an Authentication header with the 'Bearer' scheme.
 3. adds an interceptor that broadcasts an event on 401 and 403 errors so that they can be handled
 4. Uses ng-idle to remove the token from storage when the user is idle
 
