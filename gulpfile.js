@@ -3,7 +3,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
-    annotate = require('gulp-ng-annotate');
+    annotate = require('gulp-ng-annotate'),
 sourceFiles = [
     'src/ngToken/ngToken.prefix',
     'src/ngToken/directives/**/*.js',

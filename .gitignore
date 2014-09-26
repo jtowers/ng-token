@@ -11,7 +11,7 @@ index.html
 node_modules/
 npm-debug.log
 libpeerconnection.log
-
+docs/
 # OS-specific
 .DS_Store
 
