@@ -6,7 +6,6 @@
 .project
 .settings
 .codio
-index.html
 # Ignore node stuff
 node_modules/
 npm-debug.log
