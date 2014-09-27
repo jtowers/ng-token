@@ -32,7 +32,8 @@
     "canonical-path": "0.0.2",
     "angular-jsdoc": "~0.1.1",
     "jsdoc": "~3.3.0-alpha9",
-    "ink-docstrap": "~0.4.12"
+    "ink-docstrap": "~0.4.12",
+    "gulp-shell": "~0.2.9"
   },
   "engines": {
     "node": ">=0.8.0"

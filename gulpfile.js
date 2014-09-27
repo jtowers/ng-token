@@ -4,6 +4,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     annotate = require('gulp-ng-annotate'),
+    shell = require('gulp-shell');
 sourceFiles = [
     'src/ngToken/ngToken.prefix',
     'src/ngToken/directives/**/*.js',
@@ -52,5 +53,15 @@ gulp.task('test-dist-minified', function (done) {
         singleRun: true
     }, done);
 });
+
+ 
+gulp.task('docs', shell.task([ 
+  'node_modules/jsdoc/jsdoc.js '+ 
+    '-c node_modules/angular-jsdoc/conf.json '+   // config file
+    '-t node_modules/angular-jsdoc/template '+    // template file
+    '-d docs '+                             // output directory
+    '-r src/*'+
+    ' README.md'
+]));
 
 gulp.task('default', ['test-src', 'build']);

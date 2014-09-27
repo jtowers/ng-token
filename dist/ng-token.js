@@ -3,9 +3,19 @@
 
 (function () {
     var app = angular.module('ngToken.Interceptor', ['ngToken.User']);
+    /**
+     * @ngdoc service
+     * @name ngToken.Intercept
+     * @description Interceptor that adds the stored token to requests and broadcasts 401 and 403 errors
+     */
     app.factory('ngToken.Intercept', ["$rootScope", "$q", "$window", "$tokenUser", function ($rootScope, $q, $window, $tokenUser) {
-
         var intercept = {};
+       /**
+        * @ngdoc method
+        * @name ngToken.Intercept#request
+        * @description Checks to see if the token exists. If so, adds it to the Autorization header using the Bearer scheme.
+        * 
+        */
         intercept.request = function (config) {
             config.headers = config.headers || {};
             if($tokenUser.getToken()) {
@@ -13,7 +23,11 @@
             }
             return config;
         };
-
+        /**
+         * @ngdoc method
+         * @name ngToken.Intercept#responseError
+         * @description Checks errors for a 401 or 403 status and broadcasts and event accordingly. Could be used to redirect users or invalidate tokens on authentication or authorization errors.
+         */
         intercept.responseError = function (rejection) {
             if(rejection.status === 401) {
                 $rootScope.$broadcast('$tokenNotAuthenticated', rejection);
@@ -34,7 +48,6 @@
 
 })();
 (function () {
-
     var app = angular.module('ngToken.Provider', [
         'ngToken.User'
     ]);
@@ -42,17 +55,10 @@
     /**
      * @ngdoc provider
      * @name $tokenProvider
-     *
+     * @description Provider for ngToken. Sets configuration options and exposes the $token service.
      */
     app.provider('$token', function () {
-        
-         /**
-       * @ngdoc property
-       * @name $tokenProvider.defaults.endpoints#login
-       *
-       * @description
-       * Reference to the root scope.
-       */
+
         this.defaults = {
             endpoints: {
                 login: '/login',
@@ -107,7 +113,7 @@
 
         /**
          * @ngdoc method
-         * @ngdoc $tokenProvider#tokenStorage
+         * @name $tokenProvider#tokenStorage
          * @description Sets the storage type.
          * @param {String} storage Type of storage. Can be localStorage or sessionStorage
          */
@@ -123,10 +129,6 @@
             /**
              * @ngdoc service
              * @name $token
-             * @requires $rootScope
-             * @requires $window
-             * @requires $http
-             * @requires $tokenUser
              */
             var self = this;
 
@@ -198,7 +200,6 @@
                     });
             };
 
-            
             /**
              * @ngdoc method
              * @name $token#keepAlive
@@ -210,7 +211,7 @@
                 $http.post(self.defaults.endpoints.keepAlive)
                     .success(function (data) {
                         $tokenUser.setToken(data.token);
-                    
+
                         $rootScope.$broadcast('$tokenKeepAlive', data);
                     })
                     .error(function (data) {
@@ -224,10 +225,24 @@
 })();
 (function () {
     var app = angular.module('ngToken.TimeoutManager', ['ngToken.Provider', 'ngIdle']);
+    /**
+     * @ngdoc service
+     * @name $tokenTimeout
+     * @description
+     *     Keeps track of user activity and broadcasts event and removes tokens from storage on session end
+     */
     app.factory('$tokenTimeout', ["$idle", "$token", "$window", "$rootScope", "$document", function ($idle, $token, $window, $rootScope, $document) {
         var timeout = {};
 
         timeout.lastActivity = new Date();
+
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#checkIdle
+         * @params {Integer} countdown Seconds to session timeout
+         * @description
+         *     Checks to make sure a token exists and that there isn't activity from another tab. Broadcasts a countdown event if the user is genuinely idle.
+         */
         timeout.checkIdle = function (countdown) {
             if($token.getCachedToken()) {
                 if(Date.parse($token.$storage.lastTouch) <= this.lastActivity) {
@@ -238,12 +253,22 @@
             }
         };
 
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#resetIdle
+         * @description Resets the ng-idle's watch and broadcasts a reset event
+         */
         timeout.resetIdle = function () {
             $idle.unwatch();
             $idle.watch();
             $rootScope.$broadcast('$tokenResetIdle');
         };
 
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#watch
+         * @description Starts the watch and sets event ng-idle event listeners
+         */
         timeout.watch = function () {
             var self = this;
             $idle.watch();
@@ -276,17 +301,20 @@
 })();
 (function () {
     'use strict';
+    
+    var app = angular.module('ngToken.User', []);
     /**
-     * @ngdoc overview
-     * @name ngToken.User
+     * @ngdoc service
+     * @name $tokenUser
      * @description Manages token storage - has functions for getting, setting, and removing tokens.
      */
-    var app = angular.module('ngToken.User', []);
     app.factory('$tokenUser',
         ["$window", "$rootScope", function ($window, $rootScope) {
             var User = {};
             User.$storage = $window.localStorage;
         /**
+         * @ngdoc method
+         * @name $tokenUser#setStorage
          * @description Sets the storage type
          * @param {String} stype Storage type - can be localStorage or sessionStorage
          */
@@ -294,23 +322,31 @@
                 this.$storage = $window[stype];
             };
         /**
+         * @ngdoc method
+         * @name $tokenUser#getStorage
          * @description Gets the storage type
+         * @returns {Object} storage object
          */
             User.getStorage = function () {
                 return this.$storage;
             };
         
         /**
+         * @ngdoc method
+         * @name $tokenUser#getToken
          * @description Gets the stored token
-         * @returns {String}
+         * @returns {String} Stored token
          */
             User.getToken = function () {
                 return this.$storage.userToken;
             };
         
         /**
+         * @ngdoc method
+         * @name $tokenUser#setToken
          * @description Sets a user token
          * @param {String} token Token to store
+         * @returns {String} Stored token
          */
             User.setToken = function (token) {
                 this.$storage.userToken = token;
@@ -318,6 +354,8 @@
             };
         
         /**
+         * @ngdoc method
+         * @name $tokenUser#removeToken
          * @description Remove the stored token
          */
             User.removeToken = function () {
@@ -330,12 +368,9 @@
 })();
 
 /**
-     * @ngdoc overview
+     * @ngdoc module
      * @name ngToken
      * @description Bootstraps submodules
-     * @requires ngToken.Provider
-     * @requires ngToken.Interceptor
-     * @requires ngToken.TimeoutManager
      */
 angular.module('ngToken', ['ngToken.Provider','ngToken.Interceptor', 'ngToken.TimeoutManager']);
 }());
