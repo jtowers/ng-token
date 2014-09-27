@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: service: $token</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">service: $token</h1>
+
+    
+
+
+
+<section>
+
+<header>
+    <h2>
+    $token
+    </h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+
+    
+        
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line100" class="name-link"><h4 class="name" id="$token"><span class="type-signature"></span>$token<span class="signature">()</span><span class="type-signature"></span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line100">line 100</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line110" class="name-link"><h4 class="name" id="getCachedToken"><span class="type-signature"></span>getCachedToken<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get the token saved in localStorage or sessionStorage</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Stored token</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('someModule', ['ngToken'])
+       .controller(function($token){
+             var token = $token.getCachedToken();
+             console.log(token);
+        });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line221" class="name-link"><h4 class="name" id="keepAlive"><span class="type-signature"></span>keepAlive<span class="signature">()</span><span class="type-signature"> &rarr; {*}</span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Calls the keepAlive endpoint to keep the session alive. This keeps tokens from expiring when the user is still browsing.
+If successful, sets a new user token and calls a success event. Otherwise, calls a failure event.
+This is automatically called by $tokenTimeout when the keepalive event is broadcast.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line221">line 221</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Data from http request</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('someModule', ['ngToken'])
+       .controller(function($scope, $token){
+
+             $scope.$on('$tokenKeepalive', function(event, data){
+                 // do post keepalive stuff
+                 // data will be the response from the http request
+             });
+
+             $scope.$on('$tokenKeepAliveFail', function(event, data){
+                 // handle keepalive failure
+                 // probably means that the token has expired
+                 // data will be the response from the http request
+             });
+
+              var user = {"username":"user", "password":"password"}
+             $token.keepAlive(user);
+        });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line185" class="name-link"><h4 class="name" id="login"><span class="type-signature"></span>login<span class="signature">(credentials)</span><span class="type-signature"> &rarr; {*}</span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Takes login credentials and sends them to the login endpoint.
+If successful, saves the token to storage and broadcasts a succss event. Otherwise it broadcasts a failure event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>credentials</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Credentials to pass to the server using the login endpoint</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line185">line 185</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Data from http request</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('someModule', ['ngToken'])
+       .controller(function($scope, $token){
+
+             $scope.$on('$tokenAuthSuccess', function(event, data){
+                 // do post login stuff
+                 // data will be the response from the http request
+             });
+
+             $scope.$on('$tokenAuthFail', function(event, data){
+                 // handle login failure
+                 // data will be the response from the http request
+             });
+
+              var user = {"username":"user", "password":"password"}
+             $token.login(user); // log the user in
+        });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line153" class="name-link"><h4 class="name" id="logout"><span class="type-signature"></span>logout<span class="signature">()</span><span class="type-signature"></span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Makes a request to the logout endpoint, calls <a href="$token.html#sessionExpired"><code>$token#sessionExpired</code></a>, and broadcasts an event</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('someModule', ['ngToken'])
+       .controller(function($scope, $token){
+
+             $scope.$on('$tokenLogoutSuccess', function(event, data){
+                 // do post logout stuff
+                 // data will be the response from the http request
+             });
+
+             $scope.$on('$tokenLogoutFail', function(event, data){
+                 // handle logout failure
+                 // data will be the response from the http request
+             });
+
+             $token.logout(); // log the user out
+        });</code></pre>
+
+    
+</dd>
+
+        
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line143" class="name-link"><h4 class="name" id="sessionExpired"><span class="type-signature"></span>sessionExpired<span class="signature">()</span><span class="type-signature"></span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Called when user session expires to clear the stored token out of storage. Called automatically by <a href="$token.html#logout"><code>$token#logout</code></a></p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line143">line 143</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+
+    
+    
+      <a href="ngToken.Provider.js.html#line126" class="name-link"><h4 class="name" id="setToken"><span class="type-signature"></span>setToken<span class="signature">(token)</span><span class="type-signature"></span></h4></a>
+    
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Sets a new token in storage. ng-token will automatically set tokens, so this method is mostly for convenience or if you need to reset a token manually.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Token to store</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ngToken.Provider.js.html">services/ngToken.Provider.js</a>, <a href="ngToken.Provider.js.html#line126">line 126</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>angular.module('someModule', ['ngToken'])
+       .controller(function($token){
+             $token.setToken('someToken');
+             var token = $token.getCachedToken();
+             console.log(token); // 'someToken'
+        });</code></pre>
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>service</h3><ul><li><a href="$token.html">$token</a></li><li><a href="$tokenTimeout.html">$tokenTimeout</a></li><li><a href="$tokenUser.html">$tokenUser</a></li><li><a href="ngToken.Intercept.html">Intercept</a></li></ul><h3>provider</h3><ul><li><a href="$tokenProvider.html">$tokenProvider</a></li></ul><h3>module</h3><ul><li><a href="ngToken.html">ngToken</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> 
+    using <a href="https://github.com/allenhwkim/angularjs-google-maps/tree/master/config/jsdoc/template">custom template </a> and 
+    <a href="https://raw.githubusercontent.com/allenhwkim/angularjs-google-maps/master/config/jsdoc/plugins/angular.js">custom tag @ngdoc</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+<script>
+  var href=window.location.href.match(/\/([^\/]+$)/)[1];
+  document.querySelector("nav a[href='"+href+"']").scrollIntoView(true);
+  if (window.location.hash == "")
+    document.querySelector("body").scrollIntoView(true);
+</script>
+</body>
+</html>
