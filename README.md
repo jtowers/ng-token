@@ -52,33 +52,10 @@ app.controller('myModuleController', function($token, $tokenTimeout){
   $tokenTimeout.watch();
 });
 ```
-## Requesting a new token
-Call `$token.login()` and pass a user credentials hash to authenticate a user and request a token back.
+## Usage
+See the documentation for explanations examples of [$token](http://jtowers.github.io/ng-token/docs/$token.html) and [$tokenTimeout](http://jtowers.github.io/ng-token/docs/$tokenTimeout.html) methods.
 
-Listen for '$tokenAuthSuccess' and '$tokenAuthFail' events to respond to token requests.
-
-```
-app.controller('myModuleController', function($token, $scope){
-    var user = {
-      username: 'someUser',
-      password: 'somePassword'
-    };
-    $scope.$on('$tokenAuthSuccess', function(event, data){
-        console.log(data) // data is the data returned from the auth request
-    });
-    
-    $scope.$on('$tokenAuthFail', function(event, data){
-        console.log(data) // data is the data returned from the request
-    })
-    $token.login();
-});
-```
-
-Logging in will automatically set the token. A successful login response should be a hash with a key named 'token' that contains the token to store.
-
-The hash can contain anything else necessary for your app (e.g., a deserialized user).
 
 ## Todo
 1. Write more substantial tests
-2. Improve documentation
 
