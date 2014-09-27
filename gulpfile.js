@@ -64,4 +64,4 @@ gulp.task('docs', shell.task([
     ' README.md'
 ]));
 
-gulp.task('default', ['test-src', 'build']);
+gulp.task('default', ['test-src', 'build', 'docs']);
