@@ -1,9 +1,23 @@
 (function () {
     var app = angular.module('ngToken.TimeoutManager', ['ngToken.Provider', 'ngIdle']);
+    /**
+     * @ngdoc service
+     * @name $tokenTimeout
+     * @description
+     *     Keeps track of user activity and broadcasts event and removes tokens from storage on session end
+     */
     app.factory('$tokenTimeout', function ($idle, $token, $window, $rootScope, $document) {
         var timeout = {};
 
         timeout.lastActivity = new Date();
+
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#checkIdle
+         * @params {Integer} countdown Seconds to session timeout
+         * @description
+         *     Checks to make sure a token exists and that there isn't activity from another tab. Broadcasts a countdown event if the user is genuinely idle.
+         */
         timeout.checkIdle = function (countdown) {
             if($token.getCachedToken()) {
                 if(Date.parse($token.$storage.lastTouch) <= this.lastActivity) {
@@ -14,12 +28,22 @@
             }
         };
 
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#resetIdle
+         * @description Resets the ng-idle's watch and broadcasts a reset event
+         */
         timeout.resetIdle = function () {
             $idle.unwatch();
             $idle.watch();
             $rootScope.$broadcast('$tokenResetIdle');
         };
 
+        /**
+         * @ngdoc method
+         * @name $tokenTimeout#watch
+         * @description Starts the watch and sets event ng-idle event listeners
+         */
         timeout.watch = function () {
             var self = this;
             $idle.watch();

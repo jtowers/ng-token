@@ -1,5 +1,4 @@
 (function () {
-
     var app = angular.module('ngToken.Provider', [
         'ngToken.User'
     ]);
@@ -7,17 +6,10 @@
     /**
      * @ngdoc provider
      * @name $tokenProvider
-     *
+     * @description Provider for ngToken. Sets configuration options and exposes the $token service.
      */
     app.provider('$token', function () {
-        
-         /**
-       * @ngdoc property
-       * @name $tokenProvider.defaults.endpoints#login
-       *
-       * @description
-       * Reference to the root scope.
-       */
+
         this.defaults = {
             endpoints: {
                 login: '/login',
@@ -72,7 +64,7 @@
 
         /**
          * @ngdoc method
-         * @ngdoc $tokenProvider#tokenStorage
+         * @name $tokenProvider#tokenStorage
          * @description Sets the storage type.
          * @param {String} storage Type of storage. Can be localStorage or sessionStorage
          */
@@ -88,10 +80,6 @@
             /**
              * @ngdoc service
              * @name $token
-             * @requires $rootScope
-             * @requires $window
-             * @requires $http
-             * @requires $tokenUser
              */
             var self = this;
 
@@ -163,7 +151,6 @@
                     });
             };
 
-            
             /**
              * @ngdoc method
              * @name $token#keepAlive
@@ -175,7 +162,7 @@
                 $http.post(self.defaults.endpoints.keepAlive)
                     .success(function (data) {
                         $tokenUser.setToken(data.token);
-                    
+
                         $rootScope.$broadcast('$tokenKeepAlive', data);
                     })
                     .error(function (data) {
