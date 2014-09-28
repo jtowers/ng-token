@@ -83,26 +83,9 @@ app.config(function($tokenProvider, $idleProvider){
 <pre class="prettyprint source"><code>app.controller('myModuleController', function($token, $tokenTimeout){
 // Starts to watch for browser activity.
   $tokenTimeout.watch();
-});</code></pre><h2>Requesting a new token</h2><p>Call <code>$token.login()</code> and pass a user credentials hash to authenticate a user and request a token back.</p>
-<p>Listen for '$tokenAuthSuccess' and '$tokenAuthFail' events to respond to token requests.</p>
-<pre class="prettyprint source"><code>app.controller('myModuleController', function($token, $scope){
-    var user = {
-      username: 'someUser',
-      password: 'somePassword'
-    };
-    $scope.$on('$tokenAuthSuccess', function(event, data){
-        console.log(data) // data is the data returned from the auth request
-    });
-
-    $scope.$on('$tokenAuthFail', function(event, data){
-        console.log(data) // data is the data returned from the request
-    })
-    $token.login();
-});</code></pre><p>Logging in will automatically set the token. A successful login response should be a hash with a key named 'token' that contains the token to store.</p>
-<p>The hash can contain anything else necessary for your app (e.g., a deserialized user).</p>
+});</code></pre><h2>Usage</h2><p>See the documentation for explanations examples of <a href="http://jtowers.github.io/ng-token/docs/$token.html">$token</a> and <a href="http://jtowers.github.io/ng-token/docs/$tokenTimeout.html">$tokenTimeout</a> methods.</p>
 <h2>Todo</h2><ol>
 <li>Write more substantial tests</li>
-<li>Improve documentation</li>
 </ol></article>
     </section>
 

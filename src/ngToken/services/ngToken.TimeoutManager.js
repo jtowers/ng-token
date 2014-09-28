@@ -6,7 +6,7 @@
      * @description
      *     Keeps track of user activity and broadcasts event and removes tokens from storage on session end
      */
-    app.factory('$tokenTimeout', function ($idle, $token, $window, $rootScope, $document) {
+    app.factory('$tokenTimeout', ["$idle", "$token", "$window", "$rootScope", "$document", function ($idle, $token, $window, $rootScope, $document) {
         var timeout = {};
 
         timeout.lastActivity = new Date();
@@ -19,7 +19,8 @@
          *     Checks to make sure a token exists and that there isn't activity from another tab. Broadcasts a countdown event if the user is genuinely idle.
          */
         timeout.checkIdle = function (countdown) {
-            if($token.getCachedToken()) {
+          var token = $token.getCachedToken();
+          if(typeof token !== 'undefined') {
                 if(Date.parse($token.$storage.lastTouch) <= this.lastActivity) {
                     $rootScope.$broadcast('$tokenWarn', countdown);
                 } else {
@@ -61,9 +62,12 @@
             });
 
             $rootScope.$on('$idleTimeout', function () {
+              var token = $token.getCachedToken();
+              self.resetIdle();
+              if(typeof token !== 'undefined'){
                 $token.sessionExpired();
-                self.resetIdle();
                 $rootScope.$broadcast('$tokenExpired');
+              }
             });
 
             $rootScope.$on('$keepalive', function () {
@@ -72,5 +76,5 @@
         };
 
         return timeout;
-    });
+    }]);
 })();
